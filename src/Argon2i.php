@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -36,6 +36,7 @@ final class Argon2i implements Hasher
         $options['time_cost'] = $this->cost($options) ?: \PASSWORD_ARGON2_DEFAULT_TIME_COST;
         $options['memory_cost'] = $options['memory_cost'] ?? \PASSWORD_ARGON2_DEFAULT_MEMORY_COST;
         $options['threads'] = $options['threads'] ?? \PASSWORD_ARGON2_DEFAULT_THREADS;
+
         return $this->hash($value, \PASSWORD_ARGON2I, $options);
     }
 
@@ -59,13 +60,14 @@ final class Argon2i implements Hasher
     public function needsRehash($hashed_value, $options): bool
     {
         $options['cost'] = $this->cost($options);
+
         return $this->passwordNeedsRehash($hashed_value, \PASSWORD_ARGON2I, $options);
     }
 
     /**
-     * 
-     * @param int $rounds 
-     * @return $this 
+     * @param int $rounds
+     *
+     * @return $this
      */
     public function setRounds($rounds)
     {
@@ -109,7 +111,6 @@ final class Argon2i implements Hasher
      *
      * @param string $value
      * @param string $hashed_value
-     * @param array  $options
      */
     private function hashCompare($value, $hashed_value): bool
     {

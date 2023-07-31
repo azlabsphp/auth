@@ -1,11 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Drewlabs\Auth\Tests\Stubs\User;
 use Drewlabs\Auth\Tests\Stubs\UserManager;
 use Drewlabs\Auth\UserLockManager;
 use Drewlabs\Contracts\Auth\UserManager as AuthUserManager;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class UserLockManagerTest extends TestCase
 {
@@ -40,7 +51,7 @@ class UserLockManagerTest extends TestCase
         $lock = new UserLockManager(new UserManager());
 
         // Act
-        $locked = $lock->isLocked(new User(['lock_expires_at' => (new DateTimeImmutable)->modify('+2 minutes')->format(DateTimeImmutable::ATOM)]));
+        $locked = $lock->isLocked(new User(['lock_expires_at' => (new DateTimeImmutable())->modify('+2 minutes')->format(DateTimeImmutable::ATOM)]));
 
         // Assert
         $this->assertTrue($locked);
@@ -53,7 +64,7 @@ class UserLockManagerTest extends TestCase
         $lock = new UserLockManager(new UserManager());
 
         // Act
-        $locked = $lock->isLocked(new User(['lock_enabled' => false, 'lock_expires_at' => (new DateTimeImmutable)->modify('-2 minutes')->format(DateTimeImmutable::ATOM)]));
+        $locked = $lock->isLocked(new User(['lock_enabled' => false, 'lock_expires_at' => (new DateTimeImmutable())->modify('-2 minutes')->format(DateTimeImmutable::ATOM)]));
 
         // Assert
         $this->assertFalse($locked);

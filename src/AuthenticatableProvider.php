@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Auth;
 
 use Drewlabs\Auth\Exceptions\UserAccountLockedException;
@@ -32,29 +43,22 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     private $hasher;
 
     /**
-     * Creates an authenticatable provider instance
-     * 
-     * @param UserManager $users 
-     * @param AuthenticatableFactory $factory 
-     * @param Hasher|null $hasher 
-     * @param null|AccountLockManager $lock 
+     * Creates an authenticatable provider instance.
      */
     public function __construct(
         UserManager $users,
         AuthenticatableFactory $factory,
         Hasher $hasher = null,
-        ?AccountLockManager $lock = null
+        AccountLockManager $lock = null
     ) {
         $this->users = $users;
         $this->factory = $factory;
-        $this->hasher = $hasher ?? new Argon2i;
+        $this->hasher = $hasher ?? new Argon2i();
         $this->lock = $lock ?? new UserLockManager($users);
     }
 
     /**
-     * Returns the users manager instance
-     * 
-     * @return UserManager 
+     * Returns the users manager instance.
      */
     public function getUsersManager(): UserManager
     {
@@ -62,9 +66,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     }
 
     /**
-     * Returns the authenticatable factory instance
-     * 
-     * @return AuthenticatableFactory 
+     * Returns the authenticatable factory instance.
      */
     public function getAuthFactory(): AuthenticatableFactory
     {
@@ -72,9 +74,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     }
 
     /**
-     * Returns the hasher instance
-     * 
-     * @return Hasher 
+     * Returns the hasher instance.
      */
     public function getHasher(): Hasher
     {
@@ -82,8 +82,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     }
 
     /**
-     * Returns the user lock manager instance
-     * @return AccountLockManager 
+     * Returns the user lock manager instance.
      */
     public function getLockManager(): AccountLockManager
     {
@@ -93,19 +92,21 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     public function findById($id)
     {
         $result = $this->users->findUserById($id);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
             if ($this->lock->isLocked($result)) {
                 throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
+
             return $this->factory->create($result);
         }
+
         return null;
     }
 
     public function findByToken($id, $token)
     {
         $result = $this->users->findUserByRememberToken($id, $token);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
 
             if ($this->lock->isLocked($result)) {
                 throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
@@ -123,26 +124,30 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     public function findByCrendentials(array $credentials)
     {
         $result = $this->users->findUserByCredentials($credentials);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
                 throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
+
             return $this->factory->create($result);
         }
+
         return null;
     }
 
     public function findByLogin(string $username)
     {
         $result = $this->users->findUserByLogin($username);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
                 throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
+
             return $this->factory->create($result);
         }
+
         return null;
     }
 
@@ -160,7 +165,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         $password = null;
 
         foreach ($credentials as $key => $value) {
-            if ((false !== strpos($key, 'password')) || (false !== strpos($key, 'secret'))) {
+            if (str_contains($key, 'password') || str_contains($key, 'secret')) {
                 $password = $key;
                 break;
             }
@@ -172,6 +177,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
 
         if ($this->getHasher()->check($credentials[$password], $user->authPassword())) {
             $this->getLockManager()->removeLock($this->getUsersManager()->findUserById($user->authIdentifier()));
+
             return true;
         }
 
@@ -184,10 +190,12 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
     {
         if ($this->hasher->check($secret, $user->authPassword())) {
             $this->lock->removeLock($this->users->findUserById($user->authIdentifier()));
+
             return true;
         }
 
         $this->lock->incrementFailureAttempts($this->users->findUserById($user->authIdentifier()));
+
         return false;
     }
 }

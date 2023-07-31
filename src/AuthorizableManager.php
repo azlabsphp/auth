@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Drewlabs\Auth;
 
 use Drewlabs\Contracts\Auth\Authenticatable;
-use Drewlabs\Contracts\OAuth\HasApiTokens;
 use Drewlabs\Contracts\Auth\AuthorizableManager as AbstractAuthorizableManager;
 use Drewlabs\Contracts\Auth\AuthorizationsAware;
+use Drewlabs\Contracts\OAuth\HasApiTokens;
 
 final class AuthorizableManager implements AbstractAuthorizableManager
 {
@@ -26,9 +26,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
     private $adminScopes;
 
     /**
-     * Creates authorization manager class instances
-     * 
-     * @param array $adminScopes 
+     * Creates authorization manager class instances.
      */
     public function __construct(array $adminScopes = ['sys:all'])
     {
@@ -36,17 +34,16 @@ final class AuthorizableManager implements AbstractAuthorizableManager
     }
 
     /**
-     * Checks if provided user or authenticatable is an administrator
+     * Checks if provided user or authenticatable is an administrator.
      *
      * @param HasApiTokens|Authenticatable|AuthorizationsAware $user
-     * 
+     *
      * @return bool
      */
     public function isAdmin($user)
     {
         return $this->hasAuthorization($user, $this->adminScopes ?? ['sys:all']);
     }
-
 
     public function hasAuthorizationGroups(AuthorizationsAware $user, array $groups)
     {
@@ -57,6 +54,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
                 break;
             }
         }
+
         return $exists;
     }
 
@@ -65,7 +63,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         if (empty($user->getAuthorizationGroups())) {
             return false;
         }
-        $groups = is_array($group) ? $group : [$group];
+        $groups = \is_array($group) ? $group : [$group];
         $userAuthorizationGroups = iterator_to_array($this->authorizationGroups($user->getAuthorizationGroups()));
         $exists = false;
         foreach ($groups as $current) {
@@ -74,6 +72,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
                 break;
             }
         }
+
         return $exists;
     }
 
@@ -95,7 +94,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         if (empty($user->getAuthorizations())) {
             return false;
         }
-        $authorizations = is_array($authorization) ? $authorization : [$authorization];
+        $authorizations = \is_array($authorization) ? $authorization : [$authorization];
         $userAuthorizations = iterator_to_array($this->authorizations($user->getAuthorizations()));
         $exists = false;
         foreach ($authorizations as $current) {
@@ -118,7 +117,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
     private function authorizationGroups($values)
     {
         foreach ($values as $group) {
-            yield (string)$group;
+            yield (string) $group;
         }
     }
 
@@ -132,7 +131,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
     private function authorizations(array $values)
     {
         foreach ($values as $authorization) {
-            yield (string)$authorization;
+            yield (string) $authorization;
         }
     }
 }

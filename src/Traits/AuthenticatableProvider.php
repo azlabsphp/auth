@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -22,7 +22,6 @@ use Drewlabs\Packages\Auth\Exceptions\UserAccountLockException;
 
 trait AuthenticatableProvider
 {
-
     /**
      * @var Hasher
      */
@@ -44,11 +43,11 @@ trait AuthenticatableProvider
     public function __construct(
         IUserModel $model,
         Hasher $hasher,
-        ?IAccountLockManager $userLockManager = null
+        IAccountLockManager $userLockManager = null
     ) {
         $this->model = $model;
         $this->hasher = $hasher;
-        $this->userLockManager = $userLockManager ?? new UserLockManager;
+        $this->userLockManager = $userLockManager ?? new UserLockManager();
     }
 
     /**
@@ -61,7 +60,7 @@ trait AuthenticatableProvider
     public function findById($id)
     {
         $result = $this->model->getUserById($id);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
             if ($this->userLockManager->isLocked($result)) {
                 throw new UserAccountLockException('The current user account is temporary locked');
             }
@@ -85,7 +84,7 @@ trait AuthenticatableProvider
         if (!$model) {
             return null;
         }
-        if (isset($model) && (bool) ($model->getIsActive())) {
+        if (isset($model) && (bool) $model->getIsActive()) {
             if ($this->userLockManager->isLocked($model)) {
                 throw new UserAccountLockException('The current user account is temporary locked');
             }
@@ -106,7 +105,7 @@ trait AuthenticatableProvider
     public function findByCrendentials(array $credentials)
     {
         $result = $this->model->fetchUserByCredentials($credentials);
-        if (isset($result) && (bool) ($result->getIsActive())) {
+        if (isset($result) && (bool) $result->getIsActive()) {
             // Generate an authenticatable object from the result of the query
             if ($this->userLockManager->isLocked($result)) {
                 throw new UserAccountLockException('The current user account is temporary locked');

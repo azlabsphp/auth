@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Drewlabs\Auth\AuthorizableManager;
 use Drewlabs\Auth\Tests\Stubs\Authenticatable;
 use PHPUnit\Framework\TestCase;
@@ -92,7 +103,6 @@ class AuthorizableManagerTest extends TestCase
         $this->assertFalse($result);
     }
 
-
     public function test_authorizable_has_authorization_group_returns_true_if_user_has_scope()
     {
         // Initialize
@@ -120,7 +130,6 @@ class AuthorizableManagerTest extends TestCase
         // Assert
         $this->assertFalse($result);
     }
-
 
     public function test_authorizable_has_authorization_group_returns_true_if_user_has_at_least_an_authorization_group_in_provided_list()
     {
@@ -150,7 +159,6 @@ class AuthorizableManagerTest extends TestCase
         $this->assertFalse($result);
     }
 
-
     public function test_authorizable_has_authorizations_returns_false_if_user_does_not_has_all_provided_authorizations_and_true_else()
     {
         // Initialize
@@ -163,14 +171,12 @@ class AuthorizableManagerTest extends TestCase
         // Assert
         $this->assertFalse($result);
 
-
         // Act
         $result2 = $authorizable->hasAuthorizations($user, ['app:posts:create', 'app:posts:list']);
 
         // Assert
         $this->assertTrue($result2);
     }
-
 
     public function test_authorizable_has_authorization_groups_returns_false_if_user_does_not_has_all_provided_authorization_groups_and_true_else()
     {

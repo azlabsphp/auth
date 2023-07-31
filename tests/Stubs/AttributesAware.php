@@ -88,15 +88,14 @@ trait AttributesAware
     }
 
     /**
-     * Merge attributes into internal attributes
-     * 
-     * @param array $attributes 
-     * 
-     * @return static 
+     * Merge attributes into internal attributes.
+     *
+     * @return static
      */
     public function mergeAttributes(array $attributes)
     {
         $this->attributes = array_replace_recursive($this->attributes ?? [], $attributes);
+
         return $this;
     }
 
@@ -119,14 +118,14 @@ trait AttributesAware
         ) {
             return;
         }
-        throw new \LogicException(__CLASS__ . ' must have only one required parameter which must be of type array');
+        throw new \LogicException(__CLASS__.' must have only one required parameter which must be of type array');
     }
 
     private static function validateConstructorLeastParameters(array $parameters = [])
     {
         foreach ($parameters as $parameter) {
             if (!$parameter->isOptional()) {
-                throw new \LogicException(__CLASS__ . ' must have only one required parameter which must be of type array');
+                throw new \LogicException(__CLASS__.' must have only one required parameter which must be of type array');
             }
         }
     }

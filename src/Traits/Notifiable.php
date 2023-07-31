@@ -1,12 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Auth\Traits;
 
 use Drewlabs\Packages\Auth\NotificationChannels;
 
 trait Notifiable
 {
-
     // #region Account configured channels relations
     public function channels()
     {
@@ -54,13 +64,14 @@ trait Notifiable
         // Add new channel to user notification channels collection
         $this->channels()->updateOrCreate([
             'user_id' => $this->getKey(),
-            'channel' => (string)$channel
+            'channel' => (string) $channel,
         ], [
             'channel' => $channel,
-            'identifier' => (string)$value,
+            'identifier' => (string) $value,
             'verified' => $verified,
-            'default' => $default
+            'default' => $default,
         ]);
+
         return $this;
     }
 }

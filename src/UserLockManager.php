@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of the Drewlabs package.
+ * This file is part of the drewlabs namespace.
  *
  * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
  *
@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth;
 
-use DateTimeImmutable;
 use Drewlabs\Contracts\Auth\AccountLockManager;
 use Drewlabs\Contracts\Auth\UserInterface;
 use Drewlabs\Contracts\Auth\UserManager;
@@ -32,9 +31,7 @@ class UserLockManager implements AccountLockManager
     private $users;
 
     /**
-     * Create class instances
-     * 
-     * @param UserManager $users 
+     * Create class instances.
      */
     public function __construct(UserManager $users)
     {
@@ -50,7 +47,6 @@ class UserLockManager implements AccountLockManager
     {
         return 60;
     }
-
 
     public function setMaxAttempts(int $value)
     {
@@ -72,15 +68,15 @@ class UserLockManager implements AccountLockManager
             throw new \TypeError('[$user] parameter should not be null');
         }
 
-
         if (null === $user->getLockExpireAt()) {
             if ($user->getLockEnabled()) {
                 $this->removeLock($user);
             }
+
             return false;
         }
 
-        $lockExpires = (ImmutableDateTime::ispast((new DateTimeImmutable)->setTimestamp(strtotime($user->getLockExpireAt()))));
+        $lockExpires = ImmutableDateTime::ispast((new \DateTimeImmutable())->setTimestamp(strtotime($user->getLockExpireAt())));
 
         if ($user->getLockEnabled() || !$lockExpires) {
             return true;
@@ -98,10 +94,10 @@ class UserLockManager implements AccountLockManager
      */
     public function removeLock($user)
     {
-        $this->users->updateById(strval($user->getIdentifier()), [
+        $this->users->updateById((string) $user->getIdentifier(), [
             $user->getLockedAttributeName() => false,
             $user->getLockExpiresAtAttributeName() => null,
-            $user->getLoginAttemptsAttributeName() => 0
+            $user->getLoginAttemptsAttributeName() => 0,
         ]);
     }
 
@@ -114,10 +110,10 @@ class UserLockManager implements AccountLockManager
      */
     public function lock($user)
     {
-        $this->users->updateById(strval($user->getIdentifier()), [
+        $this->users->updateById((string) $user->getIdentifier(), [
             $user->getLockedAttributeName() => true,
-            $user->getLockExpiresAtAttributeName() => date('Y-m-d H:i:s', ImmutableDateTime::addMinutes(new DateTimeImmutable, static::getLockTimeoutInMinutes())->getTimestamp()),
-            $user->getLoginAttemptsAttributeName() => 0
+            $user->getLockExpiresAtAttributeName() => date('Y-m-d H:i:s', ImmutableDateTime::addMinutes(new \DateTimeImmutable(), static::getLockTimeoutInMinutes())->getTimestamp()),
+            $user->getLoginAttemptsAttributeName() => 0,
         ]);
     }
 
@@ -130,12 +126,12 @@ class UserLockManager implements AccountLockManager
      */
     public function incrementFailureAttempts($user)
     {
-        if (intval($user->getLoginAttempts()) >= $this->max_attempts) {
+        if ((int) $user->getLoginAttempts() >= $this->max_attempts) {
             $this->lock($user);
         } else {
-            $loginAttempts = intval($user->getLoginAttempts()) + 1;
-            $this->users->updateById(strval($user->getIdentifier()), [
-                $user->getLoginAttemptsAttributeName() => $loginAttempts
+            $loginAttempts = (int) $user->getLoginAttempts() + 1;
+            $this->users->updateById((string) $user->getIdentifier(), [
+                $user->getLoginAttemptsAttributeName() => $loginAttempts,
             ]);
         }
     }

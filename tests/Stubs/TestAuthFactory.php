@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /*
@@ -13,7 +14,6 @@ declare(strict_types=1);
 namespace Drewlabs\Auth\Tests\Stubs;
 
 use Drewlabs\Auth\AuthenticatableFactory;
-use Drewlabs\Auth\Tests\Stubs\Authenticatable;
 use Drewlabs\Contracts\Auth\UserInterface;
 
 class TestAuthFactory implements AuthenticatableFactory

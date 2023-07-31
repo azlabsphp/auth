@@ -13,23 +13,22 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth\Tests\Stubs;
 
-use Drewlabs\Auth\Tests\Stubs\AttributesAware;
 use Drewlabs\Auth\Tests\Stubs\HasApiTokens as StubsHasApiTokens;
 use Drewlabs\Contracts\Auth\Authenticatable as AbstractAuthenticatable;
 use Drewlabs\Contracts\Auth\AuthorizationsAware;
 use Drewlabs\Contracts\Auth\HasAbilities;
 use Drewlabs\Contracts\Auth\NotificationChannelsAware;
-use Drewlabs\Contracts\Auth\Verifiable;
-use Drewlabs\Core\Helpers\Arr;
 use Drewlabs\Contracts\Auth\UserInterface;
 use Drewlabs\Contracts\Auth\UserMetdataAware;
+use Drewlabs\Contracts\Auth\Verifiable;
 use Drewlabs\Contracts\OAuth\HasApiTokens;
+use Drewlabs\Core\Helpers\Arr;
 
 final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAware, HasAbilities, HasApiTokens
 {
+    use AttributesAware;
     use Authorizable;
     use StubsHasApiTokens;
-    use AttributesAware;
 
     /**
      * @var array
@@ -37,10 +36,9 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
     private $attributes = [];
 
     /**
-     * Creates class instance
-     * 
-     * @param array $attributes 
-     * @return void 
+     * Creates class instance.
+     *
+     * @return void
      */
     private function __construct(array $attributes = [])
     {
@@ -53,9 +51,10 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
 
     public function tokenExpires()
     {
-        if (!is_object($this->accessToken)) {
+        if (!\is_object($this->accessToken)) {
             return true;
         }
+
         return $this->accessToken->expires();
     }
 
@@ -63,7 +62,6 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
     {
         return $this->accessToken->expiresAt();
     }
-
 
     public function getAuthIdentifierName()
     {
@@ -102,7 +100,7 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
 
     public function authIdentifier()
     {
-        return (string) ($this->getAttribute($this->authIdentifierName()));
+        return (string) $this->getAttribute($this->authIdentifierName());
     }
 
     public function authPassword()
@@ -138,7 +136,6 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
         return $this->user_details;
     }
 
-
     /**
      * @param UserInterface|null $model
      *
@@ -147,7 +144,7 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
     public static function fromAuthModel($model)
     {
         if (null === $model) {
-            return new self;
+            return new self();
         }
         // TODO : CONSTRUCT ATTRIBUTES
         $attributes = array_merge([], [
@@ -156,7 +153,7 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
             'password' => $model->getPassword(),
             'is_active' => $model->getIsActive(),
             'remember_token' => $model->getRememberToken(),
-            'double_auth_active' => $model->getDoubleAuthActive()
+            'double_auth_active' => $model->getDoubleAuthActive(),
         ], $model instanceof UserMetdataAware ? [
             'emails' => $model->getEmails(),
             'email' => $model->getEmail(),
@@ -178,6 +175,7 @@ final class Authenticatable implements AbstractAuthenticatable, AuthorizationsAw
             $attributes['authorizations'] = $model->getAuthorizations();
             $attributes['authorization_groups'] = $model->getAuthorizationGroups();
         }
+
         return static::createFromAttributes($attributes);
     }
 }

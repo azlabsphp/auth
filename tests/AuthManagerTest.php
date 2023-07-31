@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 use Drewlabs\Auth\AuthenticatableProvider;
 use Drewlabs\Auth\AuthManager;
 use Drewlabs\Auth\Events\LoginAttempt;
@@ -10,24 +21,16 @@ use Drewlabs\Auth\Tests\Stubs\TestAuthFactory;
 use Drewlabs\Auth\Tests\Stubs\User;
 use Drewlabs\Auth\Tests\Stubs\UserManager;
 use Drewlabs\Contracts\Auth\Authenticatable;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class AuthManagerTest extends TestCase
 {
-    private function createAuthInstance(callable $dispatcher, callable $logout = null, $locked = false)
-    {
-        $provider = new AuthenticatableProvider(new UserManager($locked), new TestAuthFactory);
-        return new AuthManager($provider, $dispatcher, $logout ?? function () {
-            // TODO : Handle logout
-        });
-    }
-
     public function test_auth_manager_authenticate_by_login_return_false_if_user_does_not_exists()
     {
 
         // Initialize
-        $authManager = $this->createAuthInstance(new Dispatcher);
+        $authManager = $this->createAuthInstance(new Dispatcher());
 
         // Act
         $result = $authManager->authenticateByLogin('test@example.com', 'PassW0rd');
@@ -75,7 +78,6 @@ class AuthManagerTest extends TestCase
         $this->assertTrue($result);
     }
 
-
     public function test_auth_manager_authenticate_by_login_set_user_if_authentication_passes()
     {
         // Initialize
@@ -101,7 +103,7 @@ class AuthManagerTest extends TestCase
     {
 
         // Initialize
-        $authManager = $this->createAuthInstance(new Dispatcher);
+        $authManager = $this->createAuthInstance(new Dispatcher());
 
         // Act
         $result = $authManager->authenticate(['username' => 'test@example.com', 'password' => 'PassW0rd']);
@@ -149,7 +151,6 @@ class AuthManagerTest extends TestCase
         $this->assertTrue($result);
     }
 
-
     public function test_auth_manager_authenticate_by_credentials_set_user_if_authentication_passes()
     {
         // Initialize
@@ -171,7 +172,6 @@ class AuthManagerTest extends TestCase
         $this->assertInstanceOf(Authenticatable::class, $authManager->user());
     }
 
-
     public function test_auth_manager_logout_call_logout_callback_with_authenticatable_instance()
     {
         /**
@@ -184,7 +184,7 @@ class AuthManagerTest extends TestCase
         $dispatcherMock = $this->createMock(Dispatcher::class);
         $authManager = $this->createAuthInstance($dispatcherMock, $logoutMock);
 
-        $user = (new TestAuthFactory)->create(new User(['id' => 1, 'username' => 'test@example.com']));
+        $user = (new TestAuthFactory())->create(new User(['id' => 1, 'username' => 'test@example.com']));
 
         // Assert
         $logoutMock->expects($this->once())
@@ -201,7 +201,7 @@ class AuthManagerTest extends TestCase
 
     public function test_auth_manager_authenticate_via_token_return_false_is_remember_token_is_attached_to_user_in_users_repository()
     {
-        $authManager = $this->createAuthInstance(new Dispatcher);
+        $authManager = $this->createAuthInstance(new Dispatcher());
 
         // Act
         $result = $authManager->authenticateViaToken(1, md5('NoRememberToken'));
@@ -209,15 +209,24 @@ class AuthManagerTest extends TestCase
         // Assert
         $this->assertFalse($result);
     }
-    
+
     public function test_auth_manager_authenticate_via_token_return_true_is_remember_token_is_attached_to_user_in_users_repository()
     {
-        $authManager = $this->createAuthInstance(new Dispatcher);
+        $authManager = $this->createAuthInstance(new Dispatcher());
 
         // Act
         $result = $authManager->authenticateViaToken(1, md5('MyRemberToken'));
 
         // Assert
         $this->assertTrue($result);
+    }
+
+    private function createAuthInstance(callable $dispatcher, callable $logout = null, $locked = false)
+    {
+        $provider = new AuthenticatableProvider(new UserManager($locked), new TestAuthFactory());
+
+        return new AuthManager($provider, $dispatcher, $logout ?? static function () {
+            // TODO : Handle logout
+        });
     }
 }

@@ -13,20 +13,17 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth\Tests\Stubs;
 
-use Drewlabs\Auth\Tests\Stubs\AttributesAware;
 use Drewlabs\Contracts\Auth\AuthorizationsAware;
 use Drewlabs\Contracts\Auth\UserInterface;
 
 class User implements UserInterface, AuthorizationsAware
 {
-
     use AttributesAware;
 
     /**
-     * Creates user class instance
-     * 
-     * @param array $attributes 
-     * @return void 
+     * Creates user class instance.
+     *
+     * @return void
      */
     public function __construct(array $attributes = [])
     {

@@ -63,16 +63,16 @@
         },
         {
             "name": "drewlabs/contracts",
-            "version": "v0.2.12",
+            "version": "v0.2.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azlabsphp/drewlabs-contracts.git",
-                "reference": "5ade71525af2c3fdf3e6e1a75b62ce059f1e87bc"
+                "reference": "446879b1ea6ebb5c0fe845db53b59d8c81fa67ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azlabsphp/drewlabs-contracts/zipball/5ade71525af2c3fdf3e6e1a75b62ce059f1e87bc",
-                "reference": "5ade71525af2c3fdf3e6e1a75b62ce059f1e87bc",
+                "url": "https://api.github.com/repos/azlabsphp/drewlabs-contracts/zipball/446879b1ea6ebb5c0fe845db53b59d8c81fa67ef",
+                "reference": "446879b1ea6ebb5c0fe845db53b59d8c81fa67ef",
                 "shasum": ""
             },
             "require": {
@@ -99,9 +99,9 @@
             "description": "Repository for libraries interfaces",
             "support": {
                 "issues": "https://github.com/azlabsphp/drewlabs-contracts/issues",
-                "source": "https://github.com/azlabsphp/drewlabs-contracts/tree/v0.2.12"
+                "source": "https://github.com/azlabsphp/drewlabs-contracts/tree/v0.2.21"
             },
-            "time": "2023-07-31T15:20:13+00:00"
+            "time": "2023-07-31T19:31:49+00:00"
         },
         {
             "name": "drewlabs/core-helpers",

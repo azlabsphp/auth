@@ -1,5 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the drewlabs namespace.
+ *
+ * (c) Sidoine Azandrew <azandrewdevelopper@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Drewlabs\Auth;
 
 use Drewlabs\Contracts\Auth\Authenticatable as AbstractAuthenticatable;
@@ -8,7 +19,6 @@ use Illuminate\Contracts\Auth\UserProvider as IlluminateProvider;
 
 final class IlluminateUserProvider extends AuthenticatableProvider implements IlluminateProvider
 {
-
     public function retrieveById($identifier)
     {
         return $this->findById($identifier);
@@ -24,6 +34,7 @@ final class IlluminateUserProvider extends AuthenticatableProvider implements Il
         if ($user instanceof AbstractAuthenticatable) {
             return $this->updateAuthRememberToken($user, $token);
         }
+
         return $this->getUsersManager()->updateUserRememberToken($user->getAuthIdentifier(), $token);
     }
 
@@ -41,7 +52,7 @@ final class IlluminateUserProvider extends AuthenticatableProvider implements Il
         $passwordKey = null;
 
         foreach ($credentials as $key => $value) {
-            if ((false !== strpos($key, 'password')) || (false !== strpos($key, 'secret'))) {
+            if (str_contains($key, 'password') || str_contains($key, 'secret')) {
                 $passwordKey = $key;
                 break;
             }
@@ -53,6 +64,7 @@ final class IlluminateUserProvider extends AuthenticatableProvider implements Il
 
         if ($this->getHasher()->check($credentials[$passwordKey], $user->getAuthPassword())) {
             $this->getLockManager()->removeLock($this->getUsersManager()->findUserById($user->getAuthIdentifier()));
+
             return true;
         }
 

@@ -2,6 +2,7 @@
 
 namespace Drewlabs\Auth;
 
+use Drewlabs\Auth\Events\LoginAttempt;
 use Drewlabs\Auth\Events\LogoutEvent;
 use Drewlabs\Contracts\Auth\Authenticatable;
 use Drewlabs\Contracts\Auth\AuthManager as AbstractAuthManager;
@@ -52,7 +53,7 @@ final class AuthManager implements AbstractAuthManager
         $this->loginColum = $loginColum;
     }
 
-    public function authenticateByLogin(string $username, string $password, bool $remember)
+    public function authenticateByLogin(string $username, string $password, bool $remember = false)
     {
         $user = $this->provider->findByLogin($username);
 
@@ -65,7 +66,7 @@ final class AuthManager implements AbstractAuthManager
         $authenticated  = $this->provider->validateAuthSecret($user, $password);
 
         // Dispatch login attempt event
-        call_user_func_array($this->dispatcher, [$username, $authenticated]);
+        call_user_func_array($this->dispatcher, [new LoginAttempt($username, $authenticated)]);
 
         // Case the authentication fails, return false to the caller
         if (!($authenticated)) {
@@ -79,14 +80,14 @@ final class AuthManager implements AbstractAuthManager
         return $authenticated;
     }
 
-    public function authenticate(array $credentials, bool $remember)
+    public function authenticate(array $credentials, bool $remember = false)
     {
         if (count($credentials) == 0) {
-            throw new \RuntimeException('Authentication credentials must be an array');
+            throw new \InvalidArgumentException('Authentication credentials must be an array');
         }
 
         $user = $this->provider->findByCrendentials($credentials);
-
+        
         if (!($user instanceof Authenticatable)) {
             return false;
         }
@@ -94,7 +95,7 @@ final class AuthManager implements AbstractAuthManager
         $authenticated  = $this->provider->validateAuthCredentials($user, $credentials);
 
         // After the authentication flow, we dispatch an attempt event
-        call_user_func_array($this->dispatcher, [$credentials[$this->loginColum], $authenticated]);
+        call_user_func_array($this->dispatcher, [new LoginAttempt($credentials[$this->loginColum], $authenticated)]);
 
         if (!$authenticated) {
             return $authenticated;
@@ -107,7 +108,7 @@ final class AuthManager implements AbstractAuthManager
         return $authenticated;
     }
 
-    public function logout($user)
+    public function logout(Authenticatable $user)
     {
         call_user_func_array($this->logout, [$user]);
 

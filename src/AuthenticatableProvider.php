@@ -95,20 +95,20 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         $result = $this->users->findUserById($id);
         if (isset($result) && (bool) ($result->getIsActive())) {
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException('The current user account is temporary locked');
+                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
             return $this->factory->create($result);
         }
         return null;
     }
 
-    public function findByToken(int $id, $token)
+    public function findByToken($id, $token)
     {
         $result = $this->users->findUserByRememberToken($id, $token);
         if (isset($result) && (bool) ($result->getIsActive())) {
 
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException('The current user account is temporary locked');
+                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
 
             $authenticatable = $this->factory->create($result);
@@ -126,7 +126,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         if (isset($result) && (bool) ($result->getIsActive())) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException('The current user account is temporary locked');
+                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
             return $this->factory->create($result);
         }
@@ -139,7 +139,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         if (isset($result) && (bool) ($result->getIsActive())) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException('The current user account is temporary locked');
+                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
             return $this->factory->create($result);
         }
@@ -157,20 +157,20 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
             return false;
         }
 
-        $passwordKey = null;
+        $password = null;
 
         foreach ($credentials as $key => $value) {
             if ((false !== strpos($key, 'password')) || (false !== strpos($key, 'secret'))) {
-                $passwordKey = $key;
+                $password = $key;
                 break;
             }
         }
 
-        if (null === $passwordKey) {
+        if (null === $password) {
             return false;
         }
 
-        if ($this->getHasher()->check($credentials[$passwordKey], $user->authPassword())) {
+        if ($this->getHasher()->check($credentials[$password], $user->authPassword())) {
             $this->getLockManager()->removeLock($this->getUsersManager()->findUserById($user->authIdentifier()));
             return true;
         }

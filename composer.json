@@ -3,9 +3,21 @@
     "description": "drewlabs php authentication library components",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "authentication",
+        "authorization",
+        "password",
+        "hash"
+    ],
     "autoload": {
         "psr-4": {
             "Drewlabs\\Auth\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drewlabs\\Auth\\Tests\\": "tests/"
+
         }
     },
     "authors": [
@@ -17,13 +29,18 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.1|^8.0",
+        "php": "^7.0|^8.0",
         "drewlabs/contracts": "^0.2.10",
-        "drewlabs/core-helpers": "^0.2.2",
-        "illuminate/contracts": "^10.16"
+        "drewlabs/core-helpers": "^0.2.2"
     },
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
+    },
+    "suggest": {
+        "illuminate/contracts": "required for laravel user provider binding support"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.2"
     }
 }

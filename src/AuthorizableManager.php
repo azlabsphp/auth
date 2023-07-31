@@ -11,12 +11,12 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Drewlabs\Packages\ACL;
+namespace Drewlabs\Auth;
 
 use Drewlabs\Contracts\Auth\Authenticatable;
-use Drewlabs\Contracts\Auth\AuthorizableInterface;
 use Drewlabs\Contracts\OAuth\HasApiTokens;
 use Drewlabs\Contracts\Auth\AuthorizableManager as AbstractAuthorizableManager;
+use Drewlabs\Contracts\Auth\AuthorizationsAware;
 
 final class AuthorizableManager implements AbstractAuthorizableManager
 {
@@ -38,24 +38,17 @@ final class AuthorizableManager implements AbstractAuthorizableManager
     /**
      * Checks if provided user or authenticatable is an administrator
      *
-     * @param HasApiTokens|Authenticatable|AuthorizableInterface $user
+     * @param HasApiTokens|Authenticatable|AuthorizationsAware $user
      * 
      * @return bool
      */
-    public function isAdministrator($user)
+    public function isAdmin($user)
     {
-        if ($this->supportsToken($user)) {
-            foreach ($this->adminScopes as $scope) {
-                if ($user->tokenCan($scope)) {
-                    return true;
-                }
-            }
-        }
         return $this->hasAuthorization($user, $this->adminScopes ?? ['sys:all']);
     }
 
 
-    public function hasAuthorizationGroups(AuthorizableInterface $user, array $groups)
+    public function hasAuthorizationGroups(AuthorizationsAware $user, array $groups)
     {
         $exists = true;
         foreach ($groups as $group) {
@@ -67,7 +60,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         return $exists;
     }
 
-    public function hasAuthorizationGroup(AuthorizableInterface $user, $group)
+    public function hasAuthorizationGroup(AuthorizationsAware $user, $group)
     {
         if (empty($user->getAuthorizationGroups())) {
             return false;
@@ -84,7 +77,7 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         return $exists;
     }
 
-    public function hasAuthorizations(AuthorizableInterface $user, array $authorizations)
+    public function hasAuthorizations(AuthorizationsAware $user, array $authorizations)
     {
         $exists = true;
         foreach ($authorizations as $authorization) {
@@ -97,9 +90,9 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         return $exists;
     }
 
-    public function hasAuthorization(AuthorizableInterface $user, $authorization)
+    public function hasAuthorization(AuthorizationsAware $user, $authorization)
     {
-        if (!empty($user->getAuthorizations())) {
+        if (empty($user->getAuthorizations())) {
             return false;
         }
         $authorizations = is_array($authorization) ? $authorization : [$authorization];
@@ -141,15 +134,5 @@ final class AuthorizableManager implements AbstractAuthorizableManager
         foreach ($values as $authorization) {
             yield (string)$authorization;
         }
-    }
-
-    /**
-     *
-     * @param Authenticatable|HasApiTokens $user
-     * @return bool
-     */
-    private function supportsToken($user)
-    {
-        return ($user instanceof HasApiTokens) || (method_exists($user, 'tokenCan'));
     }
 }

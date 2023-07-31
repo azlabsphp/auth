@@ -69,15 +69,20 @@ class UserLockManager implements AccountLockManager
     public function isLocked($user)
     {
         if (null === $user) {
-            throw new \RuntimeException('[$user] parameter should not be null');
+            throw new \TypeError('[$user] parameter should not be null');
         }
 
+
         if (null === $user->getLockExpireAt()) {
+            if ($user->getLockEnabled()) {
+                $this->removeLock($user);
+            }
             return false;
         }
 
-        $expires = ImmutableDateTime::isfuture((new DateTimeImmutable)->setTimestamp(strtotime($user->getLockExpireAt())));
-        if ($user->getLockEnabled() && !$expires) {
+        $lockExpires = (ImmutableDateTime::ispast((new DateTimeImmutable)->setTimestamp(strtotime($user->getLockExpireAt()))));
+
+        if ($user->getLockEnabled() || !$lockExpires) {
             return true;
         }
 
@@ -93,7 +98,7 @@ class UserLockManager implements AccountLockManager
      */
     public function removeLock($user)
     {
-        $this->users->update($user->getIdentifier(), [
+        $this->users->updateById(strval($user->getIdentifier()), [
             $user->getLockedAttributeName() => false,
             $user->getLockExpiresAtAttributeName() => null,
             $user->getLoginAttemptsAttributeName() => 0
@@ -109,7 +114,7 @@ class UserLockManager implements AccountLockManager
      */
     public function lock($user)
     {
-        $this->users->update($user->getIdentifier(), [
+        $this->users->updateById(strval($user->getIdentifier()), [
             $user->getLockedAttributeName() => true,
             $user->getLockExpiresAtAttributeName() => date('Y-m-d H:i:s', ImmutableDateTime::addMinutes(new DateTimeImmutable, static::getLockTimeoutInMinutes())->getTimestamp()),
             $user->getLoginAttemptsAttributeName() => 0
@@ -129,7 +134,7 @@ class UserLockManager implements AccountLockManager
             $this->lock($user);
         } else {
             $loginAttempts = intval($user->getLoginAttempts()) + 1;
-            $this->users->update($user->getIdentifier(), [
+            $this->users->updateById(strval($user->getIdentifier()), [
                 $user->getLoginAttemptsAttributeName() => $loginAttempts
             ]);
         }

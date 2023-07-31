@@ -1,0 +1,29 @@
+{
+    "name": "drewlabs/auth",
+    "description": "drewlabs php authentication library components",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Drewlabs\\Auth\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "azandrew-sidoine",
+            "email": "azandrewdevelopper@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.1|^8.0",
+        "drewlabs/contracts": "^0.2.10",
+        "drewlabs/core-helpers": "^0.2.2",
+        "illuminate/contracts": "^10.16"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth\Tests\Stubs;
 
-use Drewlabs\Auth\AuthenticatableFactory;
+use Drewlabs\Contracts\Auth\AuthenticatableFactory;
 use Drewlabs\Contracts\Auth\UserInterface;
 
 class TestAuthFactory implements AuthenticatableFactory

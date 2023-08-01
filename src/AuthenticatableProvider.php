@@ -16,6 +16,7 @@ namespace Drewlabs\Auth;
 use Drewlabs\Auth\Exceptions\UserAccountLockedException;
 use Drewlabs\Contracts\Auth\AccountLockManager;
 use Drewlabs\Contracts\Auth\Authenticatable;
+use Drewlabs\Contracts\Auth\AuthenticatableFactory;
 use Drewlabs\Contracts\Auth\AuthenticatableProvider as AbstractAuthenticatableProvider;
 use Drewlabs\Contracts\Auth\UserManager;
 use Drewlabs\Contracts\Hasher\IHasher as Hasher;

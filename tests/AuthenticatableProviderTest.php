@@ -12,7 +12,7 @@ declare(strict_types=1);
  */
 
 use Drewlabs\Auth\AuthenticatableProvider;
-use Drewlabs\Auth\Exceptions\UserAccountLockedException;
+use Drewlabs\Auth\Exceptions\UserLockedException;
 use Drewlabs\Auth\Tests\Stubs\TestAuthFactory;
 use Drewlabs\Auth\Tests\Stubs\UserManager;
 use Drewlabs\Auth\UserLockManager;
@@ -53,7 +53,7 @@ class AuthenticatableProviderTest extends TestCase
         $provider = new AuthenticatableProvider(new UserManager(true), new TestAuthFactory());
 
         // Assert
-        $this->expectException(UserAccountLockedException::class);
+        $this->expectException(UserLockedException::class);
         $this->expectExceptionMessage(sprintf('User %s account is temporary locked', 'user@example.com'));
 
         // Act
@@ -91,7 +91,7 @@ class AuthenticatableProviderTest extends TestCase
         $provider = new AuthenticatableProvider(new UserManager(true), new TestAuthFactory());
 
         // Assert
-        $this->expectException(UserAccountLockedException::class);
+        $this->expectException(UserLockedException::class);
         $this->expectExceptionMessage(sprintf('User %s account is temporary locked', 'user@example.com'));
 
         // Act
@@ -129,7 +129,7 @@ class AuthenticatableProviderTest extends TestCase
         $provider = new AuthenticatableProvider(new UserManager(true), new TestAuthFactory());
 
         // Assert
-        $this->expectException(UserAccountLockedException::class);
+        $this->expectException(UserLockedException::class);
         $this->expectExceptionMessage(sprintf('User %s account is temporary locked', (string) 'user@example.com'));
 
         // Act
@@ -167,7 +167,7 @@ class AuthenticatableProviderTest extends TestCase
         $provider = new AuthenticatableProvider(new UserManager(true), new TestAuthFactory());
 
         // Assert
-        $this->expectException(UserAccountLockedException::class);
+        $this->expectException(UserLockedException::class);
         $this->expectExceptionMessage(sprintf('User %s account is temporary locked', (string) 'user@example.com'));
 
         // Act

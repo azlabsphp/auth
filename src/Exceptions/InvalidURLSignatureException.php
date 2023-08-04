@@ -13,6 +13,17 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth\Exceptions;
 
-class UserAccountLockedException extends \Exception
+use Exception;
+
+class InvalidURLSignatureException extends Exception
 {
+    /**
+     * Create a new exception instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct('Invalid url signature.', 403);
+    }
 }

@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Drewlabs\Auth;
 
-use Drewlabs\Auth\Exceptions\UserAccountLockedException;
+use Drewlabs\Auth\Exceptions\UserLockedException;
 use Drewlabs\Contracts\Auth\AccountLockManager;
 use Drewlabs\Contracts\Auth\Authenticatable;
 use Drewlabs\Contracts\Auth\AuthenticatableFactory;
@@ -95,7 +95,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         $result = $this->users->findUserById($id);
         if (isset($result) && (bool) $result->getIsActive()) {
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
+                throw new UserLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
 
             return $this->factory->create($result);
@@ -110,7 +110,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         if (isset($result) && (bool) $result->getIsActive()) {
 
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
+                throw new UserLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
 
             $authenticatable = $this->factory->create($result);
@@ -128,7 +128,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         if (isset($result) && (bool) $result->getIsActive()) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
+                throw new UserLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
 
             return $this->factory->create($result);
@@ -143,7 +143,7 @@ class AuthenticatableProvider implements AbstractAuthenticatableProvider
         if (isset($result) && (bool) $result->getIsActive()) {
             // Generate an authenticatable object from the result of the query
             if ($this->lock->isLocked($result)) {
-                throw new UserAccountLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
+                throw new UserLockedException(sprintf('User %s account is temporary locked', $result->getUserName()));
             }
 
             return $this->factory->create($result);
